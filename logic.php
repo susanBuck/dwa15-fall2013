@@ -1,21 +1,24 @@
-<?php
+<?php 
 
-$year = date('g:ia');
+//echo "<pre>";
+//print_r($_POST);
+//echo "</pre>";
 
-$age = 50;
+$winning_number = rand(0,4);
 
-if($age <= 12) {
-	$person_type = 'kiddo';
+foreach($_POST as $field_name => $contestant_name) {
+	
+	$contestants_random_number = rand(0,4);
+	
+	// Winner!
+	if($winning_number == $contestants_random_number) {
+		$contestants[$contestant_name] = 'Winner';
+	}
+	// Loser :(
+	else {
+		$contestants[$contestant_name] = 'Loser';
+	}
+	
 }
-else if($age > 12 && $age <= 19) {
-	$person_type = 'teenager';
-}
-else if($age > 19 && $age <= 80) {
-	$person_type = 'adult';
-}
-else {
-	$person_type = 'super wise person';
-}
-
 
 ?>
