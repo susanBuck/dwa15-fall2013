@@ -1,4 +1,4 @@
 dwa15-fall2013
 ==============
 
-Code created during lecture demos
+P2 sub-repository: <https://github.com/susanBuck/p2.dwa15-practice.biz>
