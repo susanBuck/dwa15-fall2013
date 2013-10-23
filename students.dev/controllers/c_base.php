@@ -25,11 +25,6 @@ class base_controller {
 		# So we can use $user in views			
 			$this->template->set_global('user', $this->user);
 			
-		# Default the body_id to be controller + method name
-			$this->template->body_id = Router::$controller.'_'.Router::$method;
-			
-		# Default the body_id to be controller + method name
-			$this->template->li_id = Router::$controller.'_'.Router::$method;			
 	}
 	
 } # eoc

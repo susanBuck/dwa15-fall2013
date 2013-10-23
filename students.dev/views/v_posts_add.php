@@ -1,9 +1,9 @@
 <form method='POST' action='/posts/p_add'>
 
-    <br>
-    <textarea  cols="60" rows="10" name='comment'>Say something nice.</textarea>
+    <label for='content'>New Post:</label><br>
+    <textarea name='content' id='content'></textarea>
+
     <br><br>
+    <input type='submit' value='New post'>
 
-    <input type='submit' value='Add Post'>
-
-</form>
+</form> 

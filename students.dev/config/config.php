@@ -14,11 +14,11 @@ If you want a different default time format for this app, set it below
 */
 
 # What is the name of this app?
-	define('APP_NAME', 'Talkfest');  
+	define('APP_NAME', 'BlogByte');  
 
 # When email is sent out from the server, where should it come from?
 # Ideally, this should match the domain name
-	define('APP_EMAIL', 'lucille@lucillekenneyjewelry.com'); 
+	define('APP_EMAIL', 'admin@p2.pchonmany.biz'); 
 
 /* 
 A email designated to receive messages from the server. Examples:
@@ -28,7 +28,7 @@ A email designated to receive messages from the server. Examples:
  	
  	Some might want this to be the same as the APP_EMAIL, others might want to create a designated gmail address for it
 */ 	
-	define('SYSTEM_EMAIL', 'webmaster@lucillekenneyjewelry.com'); 
+	define('SYSTEM_EMAIL', 'pchonmany@g.harvard.edu'); 
 
 # Default DB name for this app
 	define('DB_NAME', "p2_dwa15-practice_biz"); 
@@ -43,5 +43,5 @@ A email designated to receive messages from the server. Examples:
 	//define('SMTP_PASSWORD', '');
 
 # For extra security, you might want to set different salts than what the core uses
-	define('PASSWORD_SALT', 'aslkdjfurlsuslrhrhspkekekekej43bdjgkitlk');
-	define('TOKEN_SALT', 'alekrjfhguslafliy67nklpoi89uyh4dfrsbveru');
+	define('PASSWORD_SALT', 'DV!S9v?UKGgT+Tx%MnFjc8$Zdh#a8@k7ycs~XWEr');
+	define('TOKEN_SALT', 'Bn47S~TdPym#tDcx!DDG@CgF?Yah7j2VqvM8QNkH');
