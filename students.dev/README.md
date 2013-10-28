@@ -1,4 +1,4 @@
-p2.lucillekenneyjewelry.com
-===========================
+p2.jacksonyeh.net
+=================
 
-Deleted old p2.lucillekenneyjewelry.com to add the new folder with the framework.
+csci-e15 project 2
