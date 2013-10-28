@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*-------------------------------------------------------------------------------------------------
 LOCAL
 This is your environment file that contains configs specific to *this* environment.
@@ -19,7 +19,7 @@ define('ENABLE_OUTGOING_EMAIL', FALSE);
 define('FAKEMAIL', FALSE);
 
 # Toggle this based on whether you want to connect to your local DB or your live DB
-define('REMOTE_DB', TRUE);
+define('REMOTE_DB', FALSE);
 
 if (REMOTE_DB) {
 	define('DB_HOST', '');
