@@ -1,64 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?php if(isset($title)) echo $title; ?></title>
+	<title><?php if(isset($title)) echo $title; ?></title>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
-   
-    <!-- Specify favicon -->
-    <link rel="icon" type="image/x-icon" href="/images/smalltalk.ico">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<!--Mobile specific meta goodness :) Ian Yates-->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <!-- Main CSS for all views -->
-    <link type="text/css" rel="stylesheet" href="/css/main.css">
+	<!--google fonts-->
+	<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700|PT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
 
-    <!--  CSS for header specific formatting -->
-    <link type="text/css" rel="stylesheet" href="/css/header.css">
+	<!--css-->
+	<!--<link rel="stylesheet" href="/css/master.css">-->
+	<link rel="stylesheet" href="/css/styles.css">
 
-    <!-- include the jstz library hosted on cdnjs -->
-    <link type="text/javascript"  src="//cdnjs.cloudflare.com/ajax/libs/json2/20121008/json2.js">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- Navigation highlight css 'iamhere' -->
+	<script type="text/javascript" src="/js/highlightnavigation.js"> </script>
+	
 
-    <!-- we need the timezone in most pages, so add the script to get the timezone here as well -->
-    <script>
-        $('input[name=timezone]').val(jstz.determine().name());
-    </script>
 
-    <!-- Controller Specific JS/CSS -->
-    <?php if(isset($client_files_head)) echo $client_files_head; ?>
-
+	<!-- Controller Specific JS/CSS -->
+	<!-- <?php if(isset($client_files_head)) echo $client_files_head; ?>-->
+	
 </head>
 
-<body>
-    <!-- Header for all pages -->
-    <div id="headerdiv">
-        <header id="pageHeader" >
-            <div id="logo">
-                <img id="logo" src="/images/smalltalk.png" width="120px" height="80px" alt="Small Talk with Big Impact" />
-            </div>
-            <div id="navigation">
-                <?php if($user): ?> 
-                    <!-- user is logged in, show member navigation bar -->
-                    <?php require_once(APP_PATH."/views/v_membernavigation.php"); ?>
-                <?php elseif ($title != 'Login'): ?>
-                    <!-- non-logged in user, show login navigation bar -->
-                    <?php require_once(APP_PATH."/views/v_visitornavigation.php"); ?>
-                <?php endif; ?>
-            </div>
-        </header>
-    </div>
+<body id='<?php if(isset($body_id)) echo $body_id; ?>'>
 
-    <!-- Main Content -->
-    <div id="contentdiv">
-        <section id="maincontent">
-            <?php if(isset($content)) echo $content; ?>
-        </section>
-    </div>
+	<div class="wrapper">
+	
+	<header>
+		
+		<h1 class="logo"><a href="">Lucille Kenney Jewelry</a></h1>
+			
+		<a class="to_nav" href="#primary_nav">Menu</a>
+		
+	</header>
 
-    <div id="footerdiv">
-        <footer id="pageFooter">
-            <h5>Copyright 2013 Small Talk</h5>
-        </footer>
-    </div>
+	
+	<article>
+	
+	<?php if(isset($content)) echo $content; ?>
+	
+	</article>
 
-    <?php if(isset($client_files_body)) echo $client_files_body; ?>
+	<!-- I placed the nav bar here because I'm using a mobile first responsive template 
+		which gives more importance to content with the nav bar listed under content and
+		a 'menu' link at the top to bounce to the nav below -->
+		
+    <nav id='primary_nav'>
+			<ul>
+        		<li id="navindex_index"><a href='/'>Home</a></li>
+        		<li id="navproducts"><a href='/products'>Products</a></li>
+        		<li id="navcontact"><a href='/contact'>Contact</a></li>
+        	</ul>
+    </nav><!-- end primary_nav-->
+        	<!-- Menu for users who are logged in -->
+        	<?php if($user): ?>
+    <nav id='access'>
+			<ul >
+            	<li id="navadd"><a href='/posts/add'>Add Post</a></li>
+            	<li id="navposts"><a href='/posts/'>View Posts<a/></li>
+            	<li id="navusers"><a href='/posts/users'>Follow Users<a/></li>
+            	<li id="navprofile"><a href='/users/profile'>Profile</a></li>
+            	<li id="navlogout"><a href='/users/logout'>Logout</a></li>
+				<li class="top"><a href="#home" title="...">Top</a></li>            	
+            </ul>
+    </nav><!-- end primary_nav-->
+        	<!-- Menu options for users who are not logged in -->
+        	<?php else: ?>
+    <nav id='access_out'>
+        	<ul>
+            	<li id="navsignup"><a href='/users/signup'>Sign up</a></li>
+            	<li id="navlogin"><a href='/users/login'>Log in</a></li>
+				<li class="top"><a href="#home" title="...">Top</a></li>            
+			</ul>
+    </nav><!-- end primary_nav-->
+
+        	<?php endif; ?>
+
+
+    <br>
+
+	<article>
+	<!--<?php if(isset($client_files_body)) echo $client_files_body; ?>-->
+	</article>
+	</div><!--end wrapper-->
 </body>
 </html>

@@ -7,70 +7,52 @@ class users_controller extends base_controller {
     } 
 
     public function index() {
-        
+    // Taken from repos 
+    # The DOC_ROOT and APP_PATH constant have to happen in the actual app
+
+	# Document root, ex: /path/to/home/app.com/../ (uses ./ on CLI)
+	define('DOC_ROOT', empty($_SERVER['DOCUMENT_ROOT']) ? './' : realpath($_SERVER['DOCUMENT_ROOT']).'/../');
+	  
+	# App path, ex: /path/to/home/app.com/
+	define('APP_PATH', realpath(dirname(__FILE__)).'/');
+         
+	# Environment
+	require_once DOC_ROOT.'environment.php'; 
+   
+	# Where is core located?
+	define('CORE_PATH',  $_SERVER['DOCUMENT_ROOT']."/../core/");
+	   
+	# Load app configs
+	require APP_PATH."/config/config.php";
+	require APP_PATH."/config/feature_flags.php";
+	  
+	# Bootstrap
+	require CORE_PATH."bootstrap.php";
+
+	# Routing
+    Router::$routes = array(
+    	'/' => '/index',     # default controller when "/" is requested
+    );
+    
+	# Match requested uri to any routes and instantiate controller
+    Router::init();
+    
+	# Display environment details
+	require CORE_PATH."environment-details.php";
+    
     echo "This is the index page";
     
     }
-
-	/*-------------------------------------------------------------------------------------------------
-	SIGNUP
-	-------------------------------------------------------------------------------------------------*/
 
     public function signup() {
     
         # Setup view
         $this->template->content = View::instance('v_users_signup');
-    	$this->template->content->unique = true;
         $this->template->title   = "Sign Up";
-        $this->template->body_id = 'signup';
+        #$this->template->body_id = 'signup';
 
         # Render template
             echo $this->template;
-            
-    }
-    
-    // Helper function to validate field trim
-    private function areFieldsFull() {
-    
-    	if(trim($_POST['first_name']) == false) {
-    		return false;
-		} elseif(trim($_POST['last_name']) == false) {
-    		return false;
-		} elseif(trim($_POST['email']) == false) {
-    		return false;
-    	} elseif(trim($_POST['password']) == false) {
-    		return false;
-    	}
-    	
-  		else{
-    		// if all is well, we return TRUE
-    		return TRUE;
-    	}    	
-    	
-    }
-  
-    // Helper function to determine duplicate email
-    private function unique_email() {
-    
-		//Make sure it's sanitized first
-		$_POST = DB::instance(DB_NAME)->sanitize($_POST);
-    	
-    	// Search the db for this email
-    	$q = "SELECT COUNT(*) 
-        		FROM users 
-        		WHERE email  = '" .$_POST['email']. "'";
-        
-		// Run the query, echo what it returns	
-		$count = DB::instance(DB_NAME)->select_field($q);
-	        		
-		if($count > 0) {
-			// If there is a match $q will be greater than 0
-			return false;
-		}
-		else{
-			return true;
-		}
-    
     }
     
     public function p_signup() {
@@ -79,35 +61,8 @@ class users_controller extends base_controller {
         #echo '<pre>'
         #print_r($_POST);
         #echo '</pre>'
-            	
-		// Using Helper function to check for duplicate emails
-    	$unique = $this->unique_email();
-    	
-    	if(!$unique || !$this->areFieldsFull()) {
-    	
-    	// Setup view
-        $this->template->content = View::instance('v_users_signup');
-        #$this->template->title   = "Signup";
-        #$this->template->body_id = 'signup';
-
-    	// Pass data to the view
-    	$this->template->content->error = true;
-    	$this->template->content->unique = $unique;
-    	
-    	// Render template
-        echo $this->template;
-        #echo "This is the login page";
         
-    		// Send them back to the signup page
-        	// Signin failed ... maybe give 'forgot password' option to reset password.
-        	//echo "You already have an account";
-        	//Router::redirect("/users/signup/error");
-    	
-    	} else {
-    	
         // More data we want stored with the user
-        // I had to move it after my error check for empty because password was
-        // getting salted and hashed so it was never empty
     	$_POST['created']  = Time::now();
     	$_POST['modified'] = Time::now();
     	
@@ -116,8 +71,8 @@ class users_controller extends base_controller {
     	
     	// This is how we will determine if the user is logged in
     	// Create an encrypted token via their email address and a random string
-    	$_POST['token'] = sha1(TOKEN_SALT.$_POST['email'].Utils::generate_random_string());
-
+    	$_POST['token'] = sha1(TOKEN_SALT.$_POST['email'].Utils::generate_random_string());  
+        
         // Insert this user into the database
     	$user_id = DB::instance(DB_NAME)->insert('users', $_POST);
     	
@@ -130,63 +85,8 @@ class users_controller extends base_controller {
     	
     	// Send them to the login page
     	Router::redirect('/users/login');
-    	}
     	
     }
-    
-	/*-------------------------------------------------------------------------------------------------
-	EDIT
-	-------------------------------------------------------------------------------------------------*/
-
-    public function edit() {
-        
-        # Setup view
-        $this->template->content = View::instance('v_users_edit');
-    	$this->template->content->unique = true;
-        $this->template->title   = "Edit Profile";
-        $this->template->body_id = 'edit';
-
-        # Render template
-            echo $this->template;
-                	
-        echo "This is the edit profile page";
-    }
-    
-    public function p_edit() {
-    // similar to a signup and p_signup
-    // Except that you are updating an existing record in the database 
-    // rather than inserting a new record
-    // And you don't want to change the token, or the created date!
-    
-        // Dump out the results of POST to see what the form submitted
-        #echo '<pre>'
-        #print_r($_POST);
-        #echo '</pre>'
-        
-        // Modify the $_POST array so it's ready to be inserted 
-        // in the database (drop empty fields)
-        // Can I use Helper function to validate field !empty for this?
-
-        
-        // Add the modified date data
-    	$_POST['modified'] = Time::now();    
-    	
-    	// Encrypt the password with salt
-    	$_POST['password'] = sha1(PASSWORD_SALT.$_POST['password']);
-    	
-    	// Update database straight from the $_POST array, like you do with the sign-up
-		// And the additional parameters are the WHERE clause 
-		// to make sure you update the correct user
-		
-		DB::instance(DB_NAME)->update('users', $_POST, ["WHERE user_id =" .$this->user->user_id]);    	
-    	    	
-    }
-    
-    
-
-	/*-------------------------------------------------------------------------------------------------
-	LOGIN
-	-------------------------------------------------------------------------------------------------*/
 
     public function login($error = NULL) {
     	
@@ -222,7 +122,9 @@ class users_controller extends base_controller {
     	// Render template
         echo $this->template;
         #echo "This is the login page";
-                	
+        
+        
+        	
     }
     
     public function p_login() {
@@ -275,10 +177,6 @@ class users_controller extends base_controller {
     	}
     	
     }
-    
-	/*-------------------------------------------------------------------------------------------------
-	LOGOUT
-	-------------------------------------------------------------------------------------------------*/
 
     public function logout() {
     
@@ -301,9 +199,12 @@ class users_controller extends base_controller {
         #echo "This is the logout page";
         
     }
-	/*-------------------------------------------------------------------------------------------------
-	PROFILE
-	-------------------------------------------------------------------------------------------------*/
+    
+        public function edit() {
+    
+    
+        echo "This is the edit user page";
+    }
     
     public function profile($user_name = NULL) {
     
