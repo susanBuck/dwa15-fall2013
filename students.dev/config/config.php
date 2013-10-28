@@ -5,43 +5,42 @@ Most of the core configs can be overwritten here on the app level.
 
 For example there's a constant in core config set for TIME_FORMAT
 
-	if(!defined('TIME_FORMAT')) define('TIME_FORMAT', 'F j, Y g:ia'); 
+    if(!defined('TIME_FORMAT')) define('TIME_FORMAT', 'F j, Y g:ia'); 
 
 If you want a different default time format for this app, set it below
 
-	define('TIME_FORMAT', 'M j Y'); 
-
+    define('TIME_FORMAT', 'M j Y'); 
 */
 
 # What is the name of this app?
-	define('APP_NAME', 'FB-Blog');  
+    define('APP_NAME', 'Small Talk');  
 
 # When email is sent out from the server, where should it come from?
 # Ideally, this should match the domain name
-	define('APP_EMAIL', 'furrukh.baber@gmail.com'); 
+    define('APP_EMAIL', 'webmaster@p2.webdevdojo.biz'); 
 
 /* 
 A email designated to receive messages from the server. Examples:
- 	* When there's a MySQL error on the live server it will send it to this email
- 	* If you're BCCing yourself on outgoing emails you may want them to go there
- 	* Logs, cron results, errors, etc.
- 	
- 	Some might want this to be the same as the APP_EMAIL, others might want to create a designated gmail address for it
-*/ 	
-	define('SYSTEM_EMAIL', 'furrukh.baber@gmail.com'); 
+    * When there's a MySQL error on the live server it will send it to this email
+    * If you're BCCing yourself on outgoing emails you may want them to go there
+    * Logs, cron results, errors, etc.
+    
+    Some might want this to be the same as the APP_EMAIL, others might want to create a designated gmail address for it
+*/  
+    define('SYSTEM_EMAIL', 'hazel.john@outlook.com'); 
 
 # Default DB name for this app
-	define('DB_NAME', "p2_dwa15-practice_biz"); 
+    define('DB_NAME', 'p2_dwa15-practice_biz'); 
 
 # Timezone
-	define('TIMEZONE', 'America/New_York');
+    define('TIMEZONE', 'America/Los_Angeles');
 
 # If your app is going to have outgoing emails, you should fill in your SMTP settings
 # For this you could use gmail SMTP or something like http://sendgrid.com/
-	//define('SMTP_HOST', '');
-	//define('SMTP_USERNAME', '');
-	//define('SMTP_PASSWORD', '');
+    //define('SMTP_HOST', '');
+    //define('SMTP_USERNAME', '');
+    //define('SMTP_PASSWORD', '');
 
 # For extra security, you might want to set different salts than what the core uses
-	define('PASSWORD_SALT', 'OQ94UyV!(^5C57eA8pIcsJdoSK6M1_*v$LGGtrn^');
-	define('TOKEN_SALT', 'OQ94UyV!(^5C57eA8pIcsJdoSK6M1_*v$LGGtrn^');
+    define('PASSWORD_SALT', '2Ys1S!Z049Q1RGPu$I2J*xDFR6nI!tezYk(2!NaP');
+    define('TOKEN_SALT', '@Z3OH*wAve#G%UudfUV_0P508IayH#)2^zOl!H)b');
