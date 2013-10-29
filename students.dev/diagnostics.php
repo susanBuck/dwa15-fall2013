@@ -12,14 +12,10 @@
 	}
 </style>
 
-<a href='?phpinfo=true'>Run phpinfo()</a>
-<?php if(isset($_GET['phpinfo'])): ?>
-	<a href='diagnostics.php'>&larr; Go back</a>
-	<?php die(phpinfo()); ?>
-<?php endif; ?>
-<br><br>
-
 <?php
+$apache_modules = apache_get_modules();
+$mod_rewrite    = in_array('mod_rewrite',$apache_modules);
+
 $ini = ini_get_all();
 
 $app_path = realpath(dirname(__FILE__)).'/';;
@@ -29,6 +25,12 @@ $environment = file_exists($doc_root."../environment.php");
 
 $core = file_exists($doc_root."../core/");
 ?>
+
+
+<?php if(isset($_GET['phpinfo'])): ?>
+	<a href='diagnostics.php'>&larr; Go back</a>
+	<?php phpinfo(); ?>
+<?php endif; ?>
 
 APP Path: <?php echo $app_path  ?>
 <br>
@@ -49,5 +51,12 @@ PHP Version: <?php echo phpversion(); ?>
 	<div class='fail'>core/ is missing</div>
 <?php endif; ?>
 
+<?php if($mod_rewrite): ?>
+	<div class='pass'>mod_rewrite is enabled</div>
+<?php else: ?>
+	<div class='fail'>mod_rewrite is not enabled</div>
+<?php endif; ?>
+
+<br><a href='?phpinfo=true'>Run phpinfo()</a>
 
 
