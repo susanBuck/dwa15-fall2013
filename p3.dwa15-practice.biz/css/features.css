@@ -1,0 +1,28 @@
+.colors {
+	width:40px;
+	height:40px;
+	border:1px solid grey;
+	float:left;
+}
+
+#red {
+	background-color:red;
+}
+
+#orange {
+	background-color:orange;
+}
+
+.textures {
+	width:80px;
+	height:40px;
+	border:1px solid grey;
+}
+
+#swirls {
+	background-image:url('/images/texture-swirls.png');
+}
+
+#paper {
+	background-image:url('/images/texture-paper.png');
+}
