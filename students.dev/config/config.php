@@ -14,14 +14,11 @@ If you want a different default time format for this app, set it below
 */
 
 # What is the name of this app?
-	define('APP_NAME', 'QUOTE <em>me</em>');  
-	
-	error_reporting(E_ALL);
-ini_set('display_errors', '1');
+	define('APP_NAME', 'Sample App');  
 
 # When email is sent out from the server, where should it come from?
 # Ideally, this should match the domain name
-	define('APP_EMAIL', 'webmaster@rusnac.net'); 
+	define('APP_EMAIL', 'webmaster@sample-app.com'); 
 
 /* 
 A email designated to receive messages from the server. Examples:
@@ -31,13 +28,13 @@ A email designated to receive messages from the server. Examples:
  	
  	Some might want this to be the same as the APP_EMAIL, others might want to create a designated gmail address for it
 */ 	
-	define('SYSTEM_EMAIL', 'webmaster@rusnac.net'); 
+	define('SYSTEM_EMAIL', 'webmaster@myapp.com'); 
 
 # Default DB name for this app
-	define('DB_NAME', "p2_dwa15-practice_biz"); 
+	define('DB_NAME', 'p2_dwa15-practice_biz'); 
 
 # Timezone
-	define('TIMEZONE', 'America/Los_Angeles');
+	define('TIMEZONE', 'America/New_York');
 
 # If your app is going to have outgoing emails, you should fill in your SMTP settings
 # For this you could use gmail SMTP or something like http://sendgrid.com/
@@ -46,5 +43,5 @@ A email designated to receive messages from the server. Examples:
 	//define('SMTP_PASSWORD', '');
 
 # For extra security, you might want to set different salts than what the core uses
-	define('PASSWORD_SALT', 'P90ri951fW7eeaVwV289uXk6NMmJVAM1');
-	define('TOKEN_SALT', 'pdB56B3P0yScTeaoL0QIuFy994EE6EP2');
+	//define('PASSWORD_SALT', '');
+	//define('TOKEN_SALT', '');
