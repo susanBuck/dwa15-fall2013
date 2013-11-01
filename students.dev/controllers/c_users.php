@@ -3,128 +3,93 @@ class users_controller extends base_controller {
 
     public function __construct() {
         parent::__construct();
- 
     } 
 
-    public function index() {
-        echo "This is the index page";
-    }
-
-	/*-------------------------------------------------------------------------------------------------
-	Display a form so users can sign up        
-	-------------------------------------------------------------------------------------------------*/
-
+    public function index () {
+	# check that there is an authenticated user logged in to be able to view dashboard 
+		if(!$this->user) {
+		die("Registered users only. <a href='/users/login'>Please Log In</a>"); 
+		}
+		else {
+	$this->template->content = View::instance('v_users_index'); 
+	$this->template->content = View::instance('v_own_posts'); 
+	echo $this->template;  	
+    		}
+        }
+    
+    /* commenting out the sign up since it is on the index page as view fragment 
+    # allow a new user to sign up 
     public function signup() {
-    
-        # Set up the view
-    	$this->template->content = View::instance('v_users_signup');
-    	
-    	# Render the view
-    	echo $this->template;
-    	
+        $this->template->content = View::instance('v_users_signup');
+	$this->template->title = "Sign Up"; 
+	echo $this->template; 
     }
-    
-    
-	/*-------------------------------------------------------------------------------------------------
-	Process the sign up form
-	-------------------------------------------------------------------------------------------------*/
-    public function p_signup () {
-    
-		
-		$_POST['created']  = Time::now();
-		$_POST['password'] = sha1(PASSWORD_SALT.$_POST['password']);
-		$_POST['token']	   = sha1(TOKEN_SALT.$_POST['email'].Utils::generate_random_string());
-		
-		//echo "<pre>";
-		//print_r($_POST);
-		//echo "<pre>";
-		
-		DB::instance(DB_NAME)->insert_row('users', $_POST);
-		
-		# Send them to the login page
-		Router::redirect('/users/login');
+    */
 
+    # process the sign up submission, add to database
+    public function p_signup() {
+	$_POST['created'] = Time::now();
+	$_POST['modified'] = Time::now(); 
+	$_POST['password'] = sha1(PASSWORD_SALT.$_POST['password']);
+	$_POST['token'] = sha1(TOKEN_SALT.$_POST['email'].Utils::generate_random_string());
+ 	$user_id = DB::instance(DB_NAME)->insert('users', $_POST); 
+	Router::redirect("/users/profile"); 
     }
 
-    public function login() {
-        
-        $this->template->content = View::instance('v_users_login');
-        echo $this->template;
-        
+    # allow a returning user to log in, if there is an error add the error message
+    public function login($error = NULL) {
+        $this->template->content = View::instance('v_users_login'); 
+	$this->template->content->error = $error; 
+	echo $this->template;
     }
 
-	 /*-------------------------------------------------------------------------------------------------
-		 Process the login form
-		-------------------------------------------------------------------------------------------------*/
+    # process the log in, if the email and password match the token, set a cookie  
+    # otherwise redirect back to login page with error message 
     public function p_login() {
-                 
-     # Hash the password they entered so we can compare it with the ones in the database
-        $_POST['password'] = sha1(PASSWORD_SALT.$_POST['password']);
-                
-     # Set up the query to see if there's a matching email/password in the DB
-        $q =
-             'SELECT token
-              FROM users
-              WHERE email = "'.$_POST['email'].'"
-              AND password = "'.$_POST['password'].'"';
-                
-        echo $q;        
-                
-     # If there was, this will return the token        
-        $token = DB::instance(DB_NAME)->select_field($q);
-                
-	# Success
-	if($token) {
-	        
-		# Don't echo anything to the page before setting this cookie!
-	    setcookie('token',$token, strtotime('+1 year'), '/');
-	    echo "Success. You are logged in!";
-	                
-		# Send them to the homepage
-	    Router::redirect('/');
+	$_POST = DB::instance(DB_NAME)->sanitize($_POST);
+	$_POST['password'] = sha1(PASSWORD_SALT.$_POST['password']);
+	$q = "SELECT token
+		FROM users
+		WHERE email = '".$_POST['email']."'
+		AND password = '".$_POST['password']."'";
+	$token = DB::instance(DB_NAME)->select_field($q);
+	if(!$token) {
+		Router::redirect("/users/login/error");
+	} else {
+		setcookie("token", $token, strtotime('+1 week'), '/');
+		Router::redirect("/users/profile"); 
 	}
-	# Fail
-	else {
-		echo "Login failed! <a href='/users/login'>Try again?</a>";
-	}
-	
-}
+    }
 
-
-
+    #assign a new token for next login, and remove cookie 
     public function logout() {
-        echo "This is the logout page";
+        $new_token = sha1(TOKEN_SALT.$this->user->email.Utils::generate_random_string());
+	$data = Array("token" => $new_token); 
+	DB::instance(DB_NAME)->update("users", $data, "WHERE token = '".$this->user->token."'"); 
+	setcookie("token", "", strtotime('-1 week'), '/'); 
+	Router::redirect("/"); 
     }
 
+    # generate information to display user’s profile
+    # if there is no user logged in redirect to login page 
     public function profile($user_name = NULL) {
-    
-    # Only logged in users are allowed...
-                if(!$this->user) {
-                        die('Members only. <a href="/users/login">Login</a>');
-                }
-    
-    # Set up the view
-    	$this->template->content = View::instance('v_users_profile');
-    	$this->tmplate->title = "Profile";
-    
-    	$client_files_head = Array(
-    	'/css/profile.css',
-    	'/css/master.css'
-    );    
-    
-    $this->template->client_files_head = Utils::load_client_files($client-files-head);
-    
-    # Pass the data to the view
-    $this->template->content->user_name = $user_name;
-    
-    # Display the view
-    echo $this->template;
-
-		//view = View::instance('v_users_profile');
-		//view->user_name = $user_name;	
-		//echo $view;
-
+	if(!$this->user) {
+		Router::redirect('/users/login');
+	}
+	$this->template->content = View::instance('v_users_profile');
+	$this->template->title = "Profile for ".$this->user->first_name;
+	$client_files_head = Array(
+		'/css/widgets.css',
+		'/css/profile.css'
+	);
+	$this->template->client_files_head = Utils::load_client_files($client_files_head);
+	$client_files_body = Array(
+		'/js/widgets.min.js',
+		'/js/profile.min.js' 
+	);
+	$this->template->client_files_body = Utils::load_client_files($client_files_body);
+	$this->template->content->user_name = $user_name; 
+	echo $this->template;
     }
 
-}
-# end of the class
+} # end of the class
