@@ -1,0 +1,54 @@
+2013-10-25 14:09:01 - INFO --> -------------------------- 
+2013-10-25 14:09:01 - INFO --> Controller/Method: posts/index 
+2013-10-25 14:09:01 - INFO --> From: UFP (adelsbergerann@gmail.com) 
+2013-10-25 14:09:01 - INFO --> To: UFP (adelsbergerann@gmail.com),  
+2013-10-25 14:09:01 - INFO --> CC:  
+2013-10-25 14:09:01 - INFO --> BCC:  
+2013-10-25 14:09:01 - INFO --> Subject: UFP SQL Error 
+2013-10-25 14:09:01 - INFO --> Body: <h2>SQL Error</h2> SELECT 
+            posts.content,
+            posts.created, 
+            posts.user_id AS post_user_id,
+            users_users.user_id AS follower_id,
+            users.first_name, 
+            users.last_name,
+
+        FROM posts
+        INNER JOIN users_users 
+            ON  
+2013-10-25 14:09:04 - INFO --> -------------------------- 
+2013-10-25 14:09:04 - INFO --> Controller/Method: posts/index 
+2013-10-25 14:09:04 - INFO --> From: UFP (adelsbergerann@gmail.com) 
+2013-10-25 14:09:04 - INFO --> To: UFP (adelsbergerann@gmail.com),  
+2013-10-25 14:09:04 - INFO --> CC:  
+2013-10-25 14:09:04 - INFO --> BCC:  
+2013-10-25 14:09:04 - INFO --> Subject: UFP SQL Error 
+2013-10-25 14:09:04 - INFO --> Body: <h2>SQL Error</h2> SELECT 
+            posts.content,
+            posts.created, 
+            posts.user_id AS post_user_id,
+            users_users.user_id AS follower_id,
+            users.first_name, 
+            users.last_name,
+
+        FROM posts
+        INNER JOIN users_users 
+            ON  
+2013-10-25 14:09:06 - INFO --> -------------------------- 
+2013-10-25 14:09:06 - INFO --> Controller/Method: posts/index 
+2013-10-25 14:09:06 - INFO --> From: UFP (adelsbergerann@gmail.com) 
+2013-10-25 14:09:06 - INFO --> To: UFP (adelsbergerann@gmail.com),  
+2013-10-25 14:09:06 - INFO --> CC:  
+2013-10-25 14:09:06 - INFO --> BCC:  
+2013-10-25 14:09:06 - INFO --> Subject: UFP SQL Error 
+2013-10-25 14:09:06 - INFO --> Body: <h2>SQL Error</h2> SELECT 
+            posts.content,
+            posts.created, 
+            posts.user_id AS post_user_id,
+            users_users.user_id AS follower_id,
+            users.first_name, 
+            users.last_name,
+
+        FROM posts
+        INNER JOIN users_users 
+            ON  

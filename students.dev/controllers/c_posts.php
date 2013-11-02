@@ -1,130 +1,131 @@
-<?php 
+<?php
 
-class posts_controller extends base_controller {
-	
-	public function __construct() {
-		parent::__construct(); 
-	
-	# check that there is an authenticated user logged in to be able to add a post 
-	if(!$this->user) {
-		die("Registered users only. <a href='/users/login'>Please Log In</a>"); 
+class posts_controller extends base_controller{
+
+	public function __construct(){
+		parent::__construct();
+
+		#Make sure user is logged in if they want to use anything in this controller.
+
+		if(!$this->user){
+			die("Members only. Please <a href='/users/login'>Login</a>");
+		}
 	}
+	public function add(){
 
-}
-	# add a new post 
-	public function add() {
-		$this->template->content = View::instance('v_posts_add'); 
-		$this->template->title = "New Post"; 
+		#Set up view
+		$this ->template->content = View::instance('v_posts_add');
+		$this->template->title = "New Post";
+
+		#Render Template
+		echo $this->template;
+	}	
 		
-		echo $this->template; 
-	}
-
-	# process the submitted post 
 	public function p_add(){
-		$_POST['user_id'] = $this->user->user_id; 
-		$_POST ['created'] = Time::now();
-		$_POST['modified'] = Time::now(); 
 
-		DB::instance(DB_NAME)->insert('posts', $_POST); 
-
-		echo "Your post has been added. <a href='/posts/add'>Share another thought</a> or <a href='/posts/index'>See all posts</a>";
-	}
-
-	#delete an added post 
-	public function p_delete(){
+		#Associate this post with this user
 		$_POST['user_id'] = $this->user->user_id;
-		$_POST['modified'] = Time::now(); 
 
-		DB::instance(DB_NAME)->delete('posts', $_POST); 
+		#Unix timestamp for when post is created and modified
+		$_POST['created']  = Time::now();
+		$_POST['modified'] = Time::now();
+
+		#Insert
+		#We didn't have to sanitize any of the $_POST data because we're using the insert method which does it for us.
+		DB::instance(DB_NAME)->insert('posts', $_POST);
+
+		#Verify posting
+		echo "Your post has been added. <a href='/posts/add'>Add another</a>";
 	}
 
-	# generate and show a list of followed users’ posts only 
-	public function index() {
-		$this->template->content = View::instance('v_posts_index'); 
-		$this->template->title = "All Thoughts"; 
+	public function users() {
 
-		$q = "SELECT 
-			posts.content,
-			posts.created, 
-			posts.user_id AS post_user_id, 
-			users_users.user_id AS follower_id,  
-			users.first_name, 
-			users.last_name
-		   FROM posts
-		   INNER JOIN users_users 
-		     ON posts.user_id = users_users.user_id_followed
-		   INNER JOIN users
-		     ON posts.user_id = users.user_id
-		   WHERE users_users.user_id = ".$this->user->user_id; 
+		#Set up the view
+		$this->template->content = View::instance("v_posts_users");
+		$this->template->title   = "Users";
 
-		$posts = DB::instance(DB_NAME)->select_rows($q); 
-		$this->template->content->posts = $posts; 
-		
-		echo $this->template; 
-	}
+		#Build a query to get all of the users
+		$q = "SELECT * FROM users";
 
-	#generate and show a list of user's own posts only 
-	public function own() {
-		$this->template->content = View::instance('v_own_posts'); 
-		$this->template->title = "My Dashboard"; 
+		#Execute the query to get all of teh users.
+		#Stor the resulting arraty in the variable $users
+		$users = DB::instance(DB_NAME)->select_rows($q);
 
-		$q = "SELECT 
-			posts.content, 
-			posts.created, 
-			posts.user_id AS post_user_id,
-		     FROM posts
-		     WHERE user_id = ".$this->user->user_id;
+		#Build the query to figure outwhat connections the user already has
+		$q = "SELECT * FROM users_users WHERE user_id = ".$this->user->user_id;
 
-		$posts = DB::instance(DB_NAME)->select_rows($q);
-		$this->template->content->posts = $posts; 
+		#Execute this query with the select_array method.
+		#The select_array will return ourresults in an array and use the "users_id Followed" field as the index.
+		#This will come in handy when we get to the view. 
+		#Store the results (an array) in teh variable $connections
+
+		$connections = DB::instance(DB_NAME)->select_array($q, 'user_id_followed');
+
+		#Pass data (users and connections) to the view
+		$this->template->content->users 		= $users;
+		$this->template->content->connections 	= $connections;
+
+		#Render the view
 		echo $this->template;
 	}
-	
-	# generate and show a list of users
-	public function users() {
-		$this->template->content = View::instance("v_posts_users");
-		$this->template->title = "Users"; 
-
-		$q = "SELECT *
-		      FROM users"; 
-
-		$users = DB::instance(DB_NAME)->select_rows($q); 
-
-		$q = "SELECT *
-		      FROM users_users
-		      WHERE user_id = ".$this->user->user_id; 
-
-		$connections = DB::instance(DB_NAME)->select_array($q, 'user_id_followed'); 
-
-		$this->template->content->users =       $users;
-		$this->template->content->connections = $connections; 
-
-		echo $this->template; 
-
-	}
-
-	# start following a user by creating a user to user relationship
+		
 	public function follow($user_id_followed) {
-		$data = Array (
+		#Prepare the dtat array to be inserted
+		$data = Array(
 			"created" => Time::now(),
-			"user_id" => $this->user->user_id, 
+			"user_id" => $this->user->user_id,
 			"user_id_followed" => $user_id_followed
-			); 
+			);
 
-		DB::instance(DB_NAME)->insert('users_users', $data); 
+		#Do the insert
+		DB::instance(DB_NAME)->insert('users_users', $data);
 
-		Router::redirect("/posts/users"); 
-	
+		#Sent them back
+		Router::redirect("/posts/users");
 	}
-	
-	# stop following a user by deleting the user to user relationship
+
 	public function unfollow($user_id_followed) {
-		$where_condition = 'WHERE user_id = '.$this->user->user_id.' AND user_id_followed = '.$user_id_followed; 		
 
-		DB::instance(DB_NAME)->delete('users_users', $where_condition); 
+    	# Delete this connection
+    	$where_condition = 'WHERE user_id = '.$this->user->user_id.' AND user_id_followed = '.$user_id_followed;
+    	DB::instance(DB_NAME)->delete('users_users', $where_condition);
 
-		Router::redirect("/posts/users"); 
-	
+   		# Send them back
+    	Router::redirect("/posts/users");
+
 	}
+
+	 public function index(){
+	 	#Set up the view
+	 	$this->template->content = View::instance('v_posts_index');
+	 	$this->template->title = "Posts";
+
+	 	#Build the query
+	 	$q = 'SELECT 
+            posts.content,
+            posts.created, 
+            posts.user_id AS post_user_id,
+            users_users.user_id AS follower_id,
+            users.first_name, 
+            users.last_name
+
+        FROM posts
+        INNER JOIN users_users 
+            ON posts.user_id = users_users.user_id_followed
+        INNER JOIN users
+        	ON posts.user_id = users.user_id
+        WHERE users_users.user_id = '.$this->user->user_id;
+
+            #Run the query
+            $posts = DB::instance(DB_NAME)->select_rows($q);
+
+            #Pass the data to the View
+            $this->template->content->posts = $posts;
+
+            #Render the view
+            echo $this->template;
+
+	 }
+
+}# end of the class
 	
-}

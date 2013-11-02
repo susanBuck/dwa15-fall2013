@@ -17,14 +17,9 @@ class index_controller extends base_controller {
 		# Any method that loads a view will commonly start with this
 		# First, set the content of the template with a view file
 			$this->template->content = View::instance('v_index_index');
-
-			
-		#Pass a signup view fragment to the index to sign up on same page
-			$this->template->content->users_signup = View::instance('v_users_signup');
-			
 			
 		# Now set the <title> tag
-			$this->template->title = "Welcome to Musings";
+			$this->template->title = "Urban Food Party";
 	
 		# CSS/JS includes
 			/*
