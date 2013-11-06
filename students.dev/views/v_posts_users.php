@@ -1,22 +1,26 @@
-<h1>Follow Users</h1>
+<div id="content">
+<h3>Select Unfollow to view all postings:</h3>
+<br>
 
-<? foreach ($users as $user): ?>
+<h2>
+<?php foreach($users as $user): ?>
 
-	<!-- Print user's name -->
-	<h2><?=$user['first_name']?> <?=$user['last_name']?></h2>
-	
+    <!-- Print this user's name -->
+    <?=$picture['picture']?> <?=$user['first_name']?> <?=$user['last_name']?>
 
-	<!-- If there is a connection with this user, sho an unfollow link -->
-	<? if(isset($connections[$user['user_id']])): ?>
+    <!-- If there exists a connection with this user, show a unfollow link -->
+    <?php if(isset($connections[$user['user_id']])): ?>
         <a href='/posts/unfollow/<?=$user['user_id']?>'>Unfollow</a>
 
-	<!-- Otherwise, show the folllow link -->
-	<? else: ?>
+    <!-- Otherwise, show the follow link -->
+    <?php else: ?>
         <a href='/posts/follow/<?=$user['user_id']?>'>Follow</a>
-    <? endif; ?>
+    <?php endif; ?>
 
-	<br><br>
+    <br><br>
 
-<? endforeach; ?>
+<?php endforeach; ?>
+</h2>
 
+</div>
 
