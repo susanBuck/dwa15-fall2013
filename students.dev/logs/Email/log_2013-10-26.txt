@@ -1,0 +1,18 @@
+2013-10-26 23:23:18 - INFO --> -------------------------- 
+2013-10-26 23:23:18 - INFO --> Controller/Method: practice/test_email 
+2013-10-26 23:23:18 - INFO --> OUTGOING EMAILS ARE DISABLED. THIS EMAIL WAS NOT SENT TO THE RECIPIENTS, ONLY webmaster@lucillekenneyjewelry.com 
+2013-10-26 23:23:18 - INFO --> From: Talkfest (lucille@lucillekenneyjewelry.com) 
+2013-10-26 23:23:18 - INFO --> To: Talkfest (webmaster@lucillekenneyjewelry.com),  
+2013-10-26 23:23:18 - INFO --> CC:  
+2013-10-26 23:23:18 - INFO --> BCC:  
+2013-10-26 23:23:18 - INFO --> Subject: Talkfest Testing email from live server 
+2013-10-26 23:23:18 - INFO --> Body: <h2>Routed Controller/Method:</h2> practice/test_email<br/><h2>Cookies</h2><pre>Array
+(
+    [token] => 4f6b6723db371283c8d92658a65297a0efe12830
+    [PHPSESSID] => f809cb74dcf71fc6e1fde5a3494a2f0f
+    [__jwpusr] => 534eab6f-f7cc-4a6b-899e-c1a651f6e76a
+)
+</pre><h2>POST</h2><pre>Array
+(
+)
+</pre><h2>GET 

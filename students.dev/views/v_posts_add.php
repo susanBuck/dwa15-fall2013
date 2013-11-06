@@ -1,17 +1,14 @@
-<section>
+<!-- View to add a post -->
+
 <article>
-	<h1 class="title">All Things European Blogs</h1>
+	<form method='POST' action='/posts/p_add'>
+
+    	<label for='content'>New Post</label><br>
+    	<textarea  cols="60" rows="10" name='content' id='content'></textarea>
+    
+    	<br><br>
+    	<input type='submit' value='New Post'>
+
+	</form>
 </article>
 
-<h2>Tell us about your travels (Hotels, Food, Tours, Travel Tips)</h2><br>
-
-<form method='POST' action='/posts/p_add'>
-
-   <h3> <label for='content'><strong>New Post:</strong></label><br>
-  <textarea name='content' cols="180"  rows="15" id='content'></textarea></h3>
-
-    <input type='submit' value='New post'>
-
-</form> 
-
-</section>

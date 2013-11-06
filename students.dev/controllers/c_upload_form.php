@@ -7,70 +7,52 @@ class users_controller extends base_controller {
     } 
 
     public function index() {
+    // Taken from repos 
+    # The DOC_ROOT and APP_PATH constant have to happen in the actual app
+
+	# Document root, ex: /path/to/home/app.com/../ (uses ./ on CLI)
+	define('DOC_ROOT', empty($_SERVER['DOCUMENT_ROOT']) ? './' : realpath($_SERVER['DOCUMENT_ROOT']).'/../');
+	  
+	# App path, ex: /path/to/home/app.com/
+	define('APP_PATH', realpath(dirname(__FILE__)).'/');
+         
+	# Environment
+	require_once DOC_ROOT.'environment.php'; 
+   
+	# Where is core located?
+	define('CORE_PATH',  $_SERVER['DOCUMENT_ROOT']."/../core/");
+	   
+	# Load app configs
+	require APP_PATH."/config/config.php";
+	require APP_PATH."/config/feature_flags.php";
+	  
+	# Bootstrap
+	require CORE_PATH."bootstrap.php";
+
+	# Routing
+    Router::$routes = array(
+    	'/' => '/index',     # default controller when "/" is requested
+    );
     
-        
+	# Match requested uri to any routes and instantiate controller
+    Router::init();
+    
+	# Display environment details
+	require CORE_PATH."environment-details.php";
+    
     echo "This is the index page";
     
     }
 
-	/*-------------------------------------------------------------------------------------------------
-	SIGNUP
-	-------------------------------------------------------------------------------------------------*/
-
     public function signup() {
     
         # Setup view
-        $this->template->content 			= View::instance('v_users_signup');
-    	$this->template->content->unique 	= true;
-        $this->template->title   			= "Sign Up";
-        $this->template->body_id 			= 'signup';
+        $this->template->content = View::instance('v_users_signup');
+        $this->template->title   = "Sign Up";
+        #$this->template->body_id = 'signup';
 
         # Render template
             echo $this->template;
-            
-    }
-    
-    // Helper function to validate field trim (empty fields in signup)
-    private function areFieldsFull() {
-    
-    	if(trim($_POST['first_name']) == false) {
-    		return false;
-		} elseif(trim($_POST['last_name']) == false) {
-    		return false;
-		} elseif(trim($_POST['email']) == false) {
-    		return false;
-    	} elseif(trim($_POST['password']) == false) {
-    		return false;
-    	}
-  		else{
-    		// if all is well, we return TRUE
-    		return TRUE;
-    	}    	
-    	
-    }
-  
-    // Helper function to determine duplicate email
-    private function unique_email() {
-    
-		//Make sure it's sanitized first
-		$_POST = DB::instance(DB_NAME)->sanitize($_POST);
-    	
-    	// Search the db for this email
-    	$q = "SELECT COUNT(*) 
-        		FROM users 
-        		WHERE email  = '" .$_POST['email']. "'";
-        
-		// Run the query, echo what it returns	
-		$count = DB::instance(DB_NAME)->select_field($q);
-	        		
-		if($count > 0) {
-			// If there is a match $q will be greater than 0
-			return false;
-		}
-		else{
-			return true;
-		}
-    
     }
     
     public function p_signup() {
@@ -79,35 +61,8 @@ class users_controller extends base_controller {
         #echo '<pre>'
         #print_r($_POST);
         #echo '</pre>'
-            	
-		// Using Helper function to check for duplicate emails
-    	$unique = $this->unique_email();
-    	
-    	if(!$unique || !$this->areFieldsFull()) {
-    	
-    		// Setup view
-        	$this->template->content = View::instance('v_users_signup');
-        	#$this->template->title   = "Signup";
-        	#$this->template->body_id = 'signup';
-
-    		// Pass data to the view
-    		$this->template->content->error = true;
-    		$this->template->content->unique = $unique;
-    	
-    	// Render template
-        echo $this->template;
-        #echo "This is the login page";
         
-    		// Send them back to the signup page
-        	// Signin failed ... maybe give 'forgot password' option to reset password.
-        	//echo "You already have an account";
-        	//Router::redirect("/users/signup/error");
-    	} 
-    	else{
-    	
         // More data we want stored with the user
-        // I had to move it after my error check for empty because password was
-        // getting salted and hashed so it was never empty
     	$_POST['created']  = Time::now();
     	$_POST['modified'] = Time::now();
     	
@@ -116,8 +71,8 @@ class users_controller extends base_controller {
     	
     	// This is how we will determine if the user is logged in
     	// Create an encrypted token via their email address and a random string
-    	$_POST['token'] = sha1(TOKEN_SALT.$_POST['email'].Utils::generate_random_string());
-
+    	$_POST['token'] = sha1(TOKEN_SALT.$_POST['email'].Utils::generate_random_string());  
+        
         // Insert this user into the database
     	$user_id = DB::instance(DB_NAME)->insert('users', $_POST);
     	
@@ -130,113 +85,8 @@ class users_controller extends base_controller {
     	
     	// Send them to the login page
     	Router::redirect('/users/login');
-    	}
     	
     }
-    
-	/*-------------------------------------------------------------------------------------------------
-	EDIT
-	-------------------------------------------------------------------------------------------------*/
-
-    public function edit() {
-    
-        // If user is blank, they're not logged in; redirect them to the login page
-    	if(!$this->user) {
-        	#Router::redirect('/users/edit')
-        	die('You must signup or log in before you can edit your profile. <a href="/">Home</a>');
-    	}
-        
-        # Setup view
-        $this->template->content = View::instance('v_users_edit');
-        $this->template->content->error = Null;
-    	$this->template->content->unique = true;
-        $this->template->title   = "Edit Profile";
-        #$this->template->body_id = 'edit';
-        
-		// Render template
-		echo $this->template;
-        
-        // echo "This is the edit profile page";
-    }
-    
-    public function p_edit() {
-    
-		if(!$_POST) {
-			Router::redirect('/users/edit');
-			return;
-		}
-
-		// Create an array ($valid_fields) to drop out empty fields and replace the $_POST
-		$valid_fields = Array();
-			
-			// If the password is empty drop it
-			if((trim($_POST['password'])=="")) {
- 				unset($_POST['password']);
-				}
-				else {
-					// Otherwise salt it
-		    		$_POST['password'] = sha1(PASSWORD_SALT.$_POST['password']);
-			}
-	
-		// Using Helper function to check for duplicate emails
-    	$unique = $this->unique_email();
-    			
-		// Loop through the POST data
-		foreach($_POST as $field_name => $value) {
-                
-			// Trim out the empty fields
-        	if(!(trim($value)=="")) {
-        	
-	        #	$valid_fields[$field_name] = stripslashes(htmlspecialchars($value));
-				$valid_fields[$field_name] = $value;
-        	#echo $field_name."<br/>";
-        	}
-        	
- 		}
- 		
-        // Add additional data to the database
-    	$valid_fields['modified'] = Time::now();  
-		
-		// Is email changing
-		if($valid_fields['email'] == $this->user->email) {
-			// if email didn't change
-			$valid_email = true;
-		} else {
-			// if email did change
-			if($this->unique_email()) {
-				$valid_email = true;
-			} else {
-				$valid_email = false;
-			}
-		}
-		
-		if($valid_email == true) {
-		
-    		// Encrypt the password with salt
-    		# $valid_fields['password'] = sha1(PASSWORD_SALT.$_POST['password']);
-    	
-    		// Update database straight from the $_POST/$valid_fields array, similar to insert in sign-up
-			echo DB::instance(DB_NAME)->update('users', $valid_fields, "WHERE user_id =" .$this->user->user_id);
-
-    		// Code here to redirect them somewhere else
-    		Router::redirect('/posts');
-		} else {
-		
-			// Setup view
-        	$this->template->content = View::instance('v_users_edit');
-        	#$this->template->title   = "Signup";
-        	#$this->template->body_id = 'signup';
-
-    		// Pass data to the view
-    		$this->template->content->error = true;
-    		echo $this->template;		
-		}
-    				
-    }
-    
-	/*-------------------------------------------------------------------------------------------------
-	LOGIN
-	-------------------------------------------------------------------------------------------------*/
 
     public function login($error = NULL) {
     	
@@ -272,7 +122,9 @@ class users_controller extends base_controller {
     	// Render template
         echo $this->template;
         #echo "This is the login page";
-                	
+        
+        
+        	
     }
     
     public function p_login() {
@@ -310,7 +162,7 @@ class users_controller extends base_controller {
 
         	// Send them to the main page - or whever you want them to go
         	// This is the index page ... maybe send them to posts.php
-        	Router::redirect("/posts");
+        	Router::redirect("/posts/add");
         	
         	#echo '<pre>';
 			#print_r($this->user);
@@ -325,10 +177,6 @@ class users_controller extends base_controller {
     	}
     	
     }
-    
-	/*-------------------------------------------------------------------------------------------------
-	LOGOUT
-	-------------------------------------------------------------------------------------------------*/
 
     public function logout() {
     
@@ -351,9 +199,12 @@ class users_controller extends base_controller {
         #echo "This is the logout page";
         
     }
-	/*-------------------------------------------------------------------------------------------------
-	PROFILE
-	-------------------------------------------------------------------------------------------------*/
+    
+        public function edit() {
+    
+    
+        echo "This is the edit user page";
+    }
     
     public function profile($user_name = NULL) {
     
@@ -362,11 +213,10 @@ class users_controller extends base_controller {
     	
     	// If user is blank, they're not logged in; redirect them to the login page
     	if(!$this->user) {
-        	#Router::redirect('/users/login')
-        	die('Members only. <a href="/users/login">Login</a>');
+        	Router::redirect('/users/login');
     	}
 
-    	// If they were not redirected away, continue:
+    	// If they weren't redirected away, continue:
     	
     	/*
     	If you look at _v_template you'll see it prints a $content variable in the <body>
@@ -377,8 +227,6 @@ class users_controller extends base_controller {
     	// Pass our view fragment to the master template content
     	// Set up the View (see Cheat Sheet)
     	$this->template->content = View::instance('v_users_profile');
-    	$this->template->content->moreContent = View::instance('v_users_edit');
-
     	// Set page title
     	$this->template->title = "Profile of".$this->user->first_name;
     	    	

@@ -1,0 +1,49 @@
+a.to_nav:hover,
+a.to_nav:focus {
+	color: #1b7887;
+	background-color: #ccc;
+}
+	
+/*navigation*/	
+
+#primary_nav ul {
+	list-style: none;
+	background: #e9cf3a;
+	padding: 10px 0;
+}
+
+#primary_nav li a {
+	display: block;
+	padding: 0 20px;
+	color: #fff;
+	text-decoration: none;
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	letter-spacing: 0.1em;
+	line-height: 2em;
+	height: 2em;
+	border-bottom: 1px solid #383838;
+}
+
+#primary_nav li:last-child a {
+	border-bottom: none;
+}
+
+#primary_nav li a:hover,
+#primary_nav li a:focus {
+	color: #1b7887;
+/*	background: #ccc;
+*/}
+
+/* styles for the 'highlightnavigation.js file navigation active */
+#primary_nav ul li#iamhere a,
+#primary_nav ul li#iamhere a:link,
+#primary_nav ul li#iamhere a:visited,
+#primary_nav ul li#iamhere a:hover { 	
+	color: #1b7887; 
+	background-color:transparent; 	
+	border-bottom: 1px solid #383838;
+}
+
+

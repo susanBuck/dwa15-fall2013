@@ -1,14 +1,4 @@
-p2.allthingseuropean.com
-========================
+p2.lucillekenneyjewelry.com
+===========================
 
-Project 2
-
-Project was originally in archives because project structure and file location change.  
-
-Author: Larry Adams
-
-Harvard Graduate student
-
-email: Professorlarryadams@gmail.com
-
-Project uses core framework to build secure applications for project 2.
+Deleted old p2.lucillekenneyjewelry.com to add the new folder with the framework.
