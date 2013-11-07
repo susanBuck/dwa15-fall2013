@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 
@@ -15,7 +15,7 @@
 
 <body>
 
-<div id='wrapper'>
+<div id='wrapper'> 
 
 	<h1>Card-o-Matic</h1>
 
@@ -29,25 +29,37 @@
 			<div class='colors'></div>
 			<div class='colors'></div>
 			<div class='colors'></div>
+			<div class='colors'></div> 
 			<div class='colors'></div>
-			<div class='colors'></div>
-			<br><br>		
+			<br><br>
+
 		<!-- Texture picture -->
 			<h2>Pick a texture</h2>
 			<div class='textures' id='swirls'></div>
 			<div class='textures' id='paper'></div>
+			<br><br>
 						
 		<!-- Message -->	
 			<h2>Pick a message</h2>
+			<input type='radio' name='message' id='happy-birthday'>
+			<label for='happy-birthday'>Happy Birthday</label><br>
+
+			<input type='radio' name='message' id='congratulations'>
+			<label for='congratulations'>Congratulations</label><br>
 			
 		
 		<!-- Recipient -->	
-			<h2>Dear...</h2>	
+			<h2>Dear...</h2>
+			<input type='text' id='recipient' maxlength='14'>
+			<div id='recipient-error'>Max 14 chars</div>
 			
 			
 		<!-- Sticker picker -->	
 			<h2>Click a sticker to add</h2>
-				</div>
+			<img class='stickers' src='images/sticker-green-gift.png'>
+			<img class='stickers' src='images/sticker-star.png'>
+
+	</div>
 	
 	<!-- Right side with the live preview -->
 	<div id='preview'>
@@ -71,3 +83,9 @@
 </body>
 
 </html>
+
+
+
+
+
+
